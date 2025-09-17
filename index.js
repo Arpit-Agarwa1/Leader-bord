@@ -1,93 +1,84 @@
-let addBtn = document.querySelector(".add");
-let firstName = document.querySelector(".first-name");
-let lastName = document.querySelector(".last-name");
-let countryName = document.querySelector(".country-name");
+let first = document.querySelector(".first-name");
+let last = document.querySelector(".last-name");
+let country = document.querySelector(".country-name");
 let score = document.querySelector(".player-score");
-let table = document.querySelector(".tab");
+let add = document.querySelector(".add");
+let tbody = document.querySelector("tbody");
 
-// variable section
+add.addEventListener("click", submitDetails);
+add.addEventListener("click", SortingScore);
 
 let data = [];
 
-//xxxxxxxxx
+// submit function for gathering input values
 
-//adding addevent listner
-addBtn.addEventListener("click", submitDetails);
-addBtn.addEventListener("click", SortingScore);
-
-//creating function for saving the details
 function submitDetails() {
-  const obj = {
-    // fullName: firstName.value + " " + lastName.value,
-    firstName: firstName.value,
-    lastName: lastName.value,
-    countryName: countryName.value,
-    score: Number(score.value),
-    fullname: function () {
-      return this.firstName + " " + this.lastName;
-    },
+  let obj = {
+    name: first.value + " " + last.value,
+    country: country.value,
+    score: score.value,
   };
 
-  //pushing obj in data
+  first.value = "";
+  last.value = "";
+  country.value = "";
+  score.value = "";
+  console.log(obj);
 
   data.push(obj);
-
-  firstName.value = "";
-  lastName.value = "";
-  countryName.value = "";
-  score.value = "";
-
-  console.log(data);
-
-  showData(obj);
+  displayDetails();
 }
 
-// function fullname(first, last) {
-//   let full = first + " " + last;
+function displayDetails() {
+  tbody.innerHTML = "";
+  for (let i = 0; i < data.length; i++) {
+    //creating element for name
+    let tr = document.createElement("tr");
+    let name = document.createElement("td");
+    name.innerText = data[i].name;
 
-//   return full;
-// }
+    //creating element for country
+    let country = document.createElement("td");
 
-function showData(obj) {
-  let tr = document.createElement("tr");
+    country.innerText = data[i].country;
 
-  const name = document.createElement("td");
-  name.innerText = obj.fullname();
+    //creating element for score
+    let score = document.createElement("td");
 
-  const country = document.createElement("td");
-  country.innerText = obj.countryName;
+    score.innerText = data[i].score;
 
-  let score = document.createElement("td");
-  score.innerText = obj.score;
-  score.classList.add("score");
+    //creating element for modification
 
-  //   score.addEventListener("click", SortingScore); ///
+    let modify = document.createElement("td");
+    let inc = document.createElement("span");
+    let dec = document.createElement("span");
 
-  let modify = document.createElement("td");
-  let inc = document.createElement("span");
-  let dec = document.createElement("span");
+    inc.innerText = "+5";
+    dec.innerText = "-5";
 
-  inc.addEventListener("click", incFun);
-  dec.addEventListener("click", decFun);
+    inc.addEventListener("click", incFun);
+    dec.addEventListener("click", decFun);
+    modify.append(inc, dec);
 
-  inc.innerText = "+5";
-  dec.innerText = "-5";
+    //creating element for delete
+    let deleted = document.createElement("td");
+    deleted.innerText = "DELETE";
+    deleted.addEventListener("click", eraseTR);
+    deleted.addEventListener("click", SortingScore);
+    //append child for tr an tbody
+    tr.append(name, country, score, modify, deleted);
 
-  let deleted = document.createElement("td");
-  deleted.innerText = "delete";
-
-  deleted.addEventListener("click", Erase);
-
-  deleted.addEventListener("click", SortingScore);
-
-  tr.append(name, country, score, modify, deleted);
-  modify.append(inc, dec);
-
-  table.appendChild(tr);
+    tbody.append(tr);
+  }
 }
 
-function Erase(e) {
+function eraseTR(e) {
   e.target.parentElement.remove();
+}
+
+function SortingScore() {
+  data.sort((a, b) => b.score - a.score);
+  console.log(data);
 }
 
 function incFun(e) {
@@ -101,9 +92,4 @@ function decFun(e) {
 
   let currentScore = Number(scoreTarget.innerText);
   scoreTarget.innerText = currentScore - 5;
-}
-
-function SortingScore() {
-  data.sort((a, b) => b.score - a.score);
-  console.log(data);
 }
